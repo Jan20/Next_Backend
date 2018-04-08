@@ -1,0 +1,33 @@
+[debug] [2018-04-08T12:18:59.115Z] ----------------------------------------------------------------------
+[debug] [2018-04-08T12:18:59.117Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only functions
+[debug] [2018-04-08T12:18:59.117Z] CLI Version:   3.17.7
+[debug] [2018-04-08T12:18:59.117Z] Platform:      darwin
+[debug] [2018-04-08T12:18:59.117Z] Node Version:  v9.10.1
+[debug] [2018-04-08T12:18:59.118Z] Time:          Sun Apr 08 2018 14:18:59 GMT+0200 (CEST)
+[debug] [2018-04-08T12:18:59.118Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-04-08T12:18:59.131Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-04-08T12:18:59.131Z] > authorizing via signed-in user
+[debug] [2018-04-08T12:18:59.133Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/next-001  
+  
+ Sun Apr 08 2018 14:18:59 GMT+0200 (CEST)
+[debug] [2018-04-08T12:18:59.817Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-08T12:18:59.817Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/next-001/tokens  
+  
+ Sun Apr 08 2018 14:18:59 GMT+0200 (CEST)
+[debug] [2018-04-08T12:19:00.425Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-08T12:19:00.427Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/next-001  
+  
+ Sun Apr 08 2018 14:19:00 GMT+0200 (CEST)
+[debug] [2018-04-08T12:19:01.385Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/Jan/Developer/Angular/Next/Next_Backend'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-04-08T12:19:02.136Z] Fetching environment
+[debug] [2018-04-08T12:19:02.137Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/526022804627:getServerAppConfig  
+  
+ Sun Apr 08 2018 14:19:02 GMT+0200 (CEST)
+[debug] [2018-04-08T12:19:02.610Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-08T12:19:02.611Z] Starting @google-cloud/functions-emulator
+[debug] [2018-04-08T12:19:04.184Z] Parsing function triggers

@@ -7,6 +7,7 @@
 
 # dependencies
 /node_modules
+/functions/src/serviceAccountKey
 
 # IDEs and editors
 /.idea
