@@ -1,0 +1,1 @@
+{"version":3,"file":"asset-model.js","sourceRoot":"","sources":["../../src/asset/asset-model.ts"],"names":[],"mappings":";;AAAA;IASI,kBAAkB;IAClB,kBAAkB;IAClB,kBAAkB;IAClB,YACI,OAAe,EACf,IAAY,EACZ,MAAc;QAEd,IAAI,CAAC,OAAO,GAAG,OAAO,CAAA;QACtB,IAAI,CAAC,IAAI,GAAG,IAAI,CAAA;QAChB,IAAI,CAAC,MAAM,GAAG,MAAM,CAAA;IACxB,CAAC;CAGJ;AAvBD,sBAuBC"}

@@ -1,47 +1,48 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 const express = require("express");
-const firebase = require("firebase-admin");
-const request = require("request");
-const firebaseApp = firebase.initializeApp({
-    credential: firebase.credential.applicationDefault(),
-    databaseURL: "https://next-001.firebaseio.com"
-});
+const user_model_1 = require("./user/user-model");
+const user_service_1 = require("./user/user-service");
+const market_model_1 = require("./market/market-model");
+const market_service_1 = require("./market/market-service");
+const asset_service_1 = require("./asset/asset-service");
 const express_app = express();
-function getStocks() {
-    const assetDocument = firebaseApp.firestore().doc(`/users/pej3fiZSJTf4tNHfNHCKHxa7eJf2/markets/cXdEgLKHka1UfLqC3NVU/assets/GsLZC6PukRyz0JUGMNYi`);
-    const assetCollection = firebaseApp.firestore().collection(`/users/pej3fiZSJTf4tNHfNHCKHxa7eJf2/markets/cXdEgLKHka1UfLqC3NVU/assets/GsLZC6PukRyz0JUGMNYi/series`);
-    assetDocument.get().then(doc => {
-        console.log(doc.data().symbol);
-        const assetName = doc.data().name;
-        const assetSymbol = doc.data().symbol;
-        request('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=ETR:BMW&outputsize=compact&apikey=6404', function (error, response, body) {
-            if (!error && response.statusCode === 200) {
-                const data = JSON.parse(body);
-                for (const key in data['Time Series (Daily)']) {
-                    if (data['Time Series (Daily)'].hasOwnProperty(key)) {
-                        console.log('____________________________________________________');
-                        console.log(assetName);
-                        console.log(data['Meta Data']['2. Symbol']);
-                        console.log(data['Time Series (Daily)'][key]['4. close']);
-                        console.log(key);
-                        console.log('____________________________________________________');
-                        assetCollection.add({
-                            'name': assetName,
-                            'symbol': data['Meta Data']['2. Symbol'],
-                            'close': data['Time Series (Daily)'][key]['4. close'],
-                            'date': key,
-                        });
-                    }
-                    else {
-                        console.log('Market data could not have been fetched');
-                        return;
-                    }
-                }
-            }
+class Exe {
+    constructor() {
+        ///////////////
+        // Variables //
+        ///////////////
+        this.userId = 'pej3fiZSJTf4tNHfNHCKHxa7eJf2';
+        this.userService = new user_service_1.UserService();
+        this.marketService = new market_service_1.MarketService();
+        this.assetService = new asset_service_1.AssetService();
+    }
+    ///////////////
+    // Functions //
+    ///////////////
+    callAlphaVantage() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.markets = [];
+            yield this.userService.getUser(this.userId).then(user => this.user = new user_model_1.User(user.userId));
+            yield this.marketService.getMarkets(this.user.userId).then(markets => markets.forEach(market => this.markets.push(new market_model_1.Market(market.marketId))));
+            this.markets.forEach(market => this.assetService.fetchAssetsFromAlphaVantage(this.user.userId, market.marketId));
         });
-    });
+    }
+}
+function getStocks() {
+    const exe = new Exe();
+    exe.callAlphaVantage()
+        .then(success => console.log('AlphaVantage API has been triggerd'))
+        .catch(err => console.log(err));
 }
 express_app.get("*", (req, res) => {
     getStocks();
@@ -51,39 +52,4 @@ exports.stocks = functions.https.onRequest((req, res) => {
     !req.path ? req.url = `/${req.url}` : null;
     return express_app(req, res);
 });
-///////////////
-// Functions //
-///////////////
-//   public getMarket(market: string): void {
-//     for (let i = 1; i < this.seeds.length; i++) {
-//       this.httpClient.get('https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=' + this.seeds[i].getSymbol() +
-//       '&outputsize=compact&apikey=6404')
-//         .subscribe(data => {
-//           this.timeline = new Timeline();
-//           for (const key in data['Time Series (Daily)']) {
-//             if (data['Time Series (Daily)'].hasOwnProperty(key)) {
-//               this.stock = new Stock();
-//               this.stock.setName(this.seeds[i].getName());
-//               this.stock.setSymbol(data['Meta Data']['2. Symbol']);
-//               this.stock.setClose(data['Time Series (Daily)'][key]['4. close']);
-//               this.stock.setDate(key);
-//               this.timeline.getStocks().push(this.stock);
-//             } else {
-//               alert('Market data could not have been fetched');
-//               return;
-//             }
-//           }
-//           console.log(this.timeline);
-//           for (let j = 0; j < 12; j++) {
-//             const stock = this.timeline.getStocks()[j];
-//             stock.setChange(
-//               (this.timeline.getStocks()[j].getClose() -
-//                 this.timeline.getStocks()[j + 1].getClose() ) /
-//                 this.timeline.getStocks()[j + 1].getClose()
-//               );
-//             this.angularFireDatabase.object('Dax' + '/' + this.seeds[i].getName() + '/' + stock.getDate()).set(stock);
-//           }
-//       });
-//     }
-//   }
 //# sourceMappingURL=index.js.map
