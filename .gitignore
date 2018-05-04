@@ -9,6 +9,7 @@
 /node_modules
 /functions/src/serviceAccountKey
 /bin
+service_account.json
 
 # IDEs and editors
 /.idea
