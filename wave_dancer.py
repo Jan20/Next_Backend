@@ -15,8 +15,10 @@ from sklearn.metrics import mean_squared_error
 # 				Retrieving Data from Firebase
 # --------------------------------------------------------------------
 
-# Use a service account
+# Import a custom service account generated at Firebase.com
 cred = credentials.Certificate('./service_account.json')
+
+# Initialization of the firebase backend
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()

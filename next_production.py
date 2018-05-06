@@ -13,7 +13,9 @@ from sklearn.metrics import mean_squared_error
 import datetime
 from keras import backend as K
 import tensorflow as tf
-        
+import keras.backend.tensorflow_backend
+
+
 print(' ------------------------------- ')
 print(' ##    #  ######  #    #  ###### ')
 print(' # #   #  #        #  #     #    ')          
@@ -23,31 +25,31 @@ print(' #    ##  ######  #    #    #    ')
 print(' ------------------------------- ')
 
 
+# Import a custom service account generated at Firebase.com
 cred = credentials.Certificate('./service_account.json')
+
+# Initialization of the firebase backend
 firebase_admin.initialize_app(cred)
+
 db = firestore.client()
-import keras.backend.tensorflow_backend
+
+# Deprecated
+#__________________________________________________________
 if keras.backend.tensorflow_backend._SESSION:
-   import tensorflow as tf
+
    tf.reset_default_graph() 
    keras.backend.tensorflow_backend._SESSION.close()
    keras.backend.tensorflow_backend._SESSION = None
-   
-class Wave_Dancer:
+#__________________________________________________________
+
+class Next:
     
+    # Variables
+
     user_id = None
     market_id = None
     asset_id = None
 
-    # Constructor
-    def __init__(self, user_id, market_id, asset_id):
-        self.user_id = user_id
-        self.market_id = market_id
-        self.asset_id = asset_id
-
-
-
-    # Variables
     scaler = None
     dataset = []
     dates = []
@@ -66,6 +68,12 @@ class Wave_Dancer:
     test_close_values = None
     train_date_values = None
     test_date_values = []
+
+    # Constructor
+    def __init__(self, user_id, market_id, asset_id):
+        self.user_id = user_id
+        self.market_id = market_id
+        self.asset_id = asset_id
 
 
     def retrieve_data_from_firestore(self):
@@ -110,7 +118,10 @@ class Wave_Dancer:
     def create_dataset(self, dataset, look_back = 1):
     
         '''
+        
         Creates a dataset from an existing one with an optional look_back period.
+        
+        
         '''
 
         self.look_back = 1
@@ -178,6 +189,10 @@ class Wave_Dancer:
         self.model.add(Dense(8, activation='relu'))
         self.model.add(Dense(1))
         self.model.compile(loss='mean_squared_error', optimizer='adam')
+        print('________________________________________________________TRAIN X______________________________________________________________________')
+        print(self.trainX)
+        print('________________________________________________________TRAIN Y______________________________________________________________________')
+        print(self.trainY)
         self.model.fit(self.trainX, self.trainY, epochs=400, batch_size=1, verbose=2)
 
         '''
@@ -390,12 +405,14 @@ class Wave_Dancer:
 class Execution_Environment:
     
     def start(self):
+        
         user_id = 'pej3fiZSJTf4tNHfNHCKHxa7eJf2'
         markets = []
 
         market_collection = db.collection(u'users/' + user_id + '/markets').get()
 
         for market in market_collection:
+            
             market_dict = market.to_dict()
             markets.append(str(market_dict[u'marketId']))
         
@@ -412,9 +429,8 @@ class Execution_Environment:
                 assets.append(str(asset_dict[u'assetId']))
             
             for j in range(0, len(assets)):
-                print(assets[j])
                 
-                t = Wave_Dancer(user_id, markets[i], assets[j])
+                t = Next(user_id, markets[i], assets[j])
                 t.retrieve_data_from_firestore()
                 t.normalize_data()
                 t.create_train_and_test_sets()
