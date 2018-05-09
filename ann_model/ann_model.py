@@ -11,45 +11,41 @@ import datetime
 from keras import backend as K
 import tensorflow as tf
 import keras.backend.tensorflow_backend
-
+from database.database import Database
 
 class ANN_Model:
     
+    db = Database()
     scaler = None
-    future_dates = []
+    series = None
+    lag = 0
+    initial_value = None
+    final_value = None
 
-    # Constructor
-    def __init__(self):
-        print('ANN_Model created')
-        
-    
     def execute(self, series, lag):
         
+        self.series = series
+        self.lag = lag
+
         reduced_series = self.reduce_series(series, lag)
         normalized_closes = self.normalize_data(reduced_series)
         ann_input = self.create_train_and_test_sets(normalized_closes)
         ann_model = self.create_core_model(ann_input)
         normalized_short_term_predictions = self.generate_short_term_predictions(ann_input, ann_model)
         denormalized_predicted_short_term_closes = self.inverse_predictions(normalized_short_term_predictions)
-
         return denormalized_predicted_short_term_closes
 
 
     def reduce_series(self, series, lag):
-        
-        self.future_dates = []
+
         dates = []
         closes = []
 
-        for i in range(0, len(series) - lag):
-        
-            closes.append(series['close'][i])
-            dates.append(series['date'][i]) 
+        for i in range(0, len(series['date']) - lag):
 
-        for i in range(len(series) - lag, len(series) - lag + 10):
-            if(series['date'][i]):
-                self.future_dates.append(series['date'][i])
-        
+            dates.append(series['date'][i])
+            closes.append(series['close'][i])
+
         data = {'date': dates, 'close': closes}
         
         return pandas.DataFrame(data=data)
@@ -87,80 +83,90 @@ class ANN_Model:
 
     def create_train_and_test_sets(self, series):
 
-        # train_size = len(series)
-        # train_close_values = series['close'][ 0 : train_size, :]
-
-        # print(train_close_values)
-        # # self.train_date_values = series[0:train_size]
         return self.create_dataset(series, 1)
-
-        
-        # '''
-        # Splitting up the dataset in a train and a test dataset
-        # '''
-
-        # train_size = int(len(self.dataset))
-        # test_size = len(self.dataset) - train_size
-
-        # self.train_close_values = self.dataset[ 0 : train_size, :]
-        # self.test_close_values = self.dataset[ train_size : len(self.dataset), :]
-
-        # self.train_date_values = self.dates[0:train_size]
-        # self.test_date_values = self.dates[train_size:len(self.dates)]
-
-        # self.trainX, self.trainY = self.create_dataset(series, 1)
-        # testX, testY = create_dataset(test_close_values, look_back)
-
 
 
     def create_core_model(self, series):
+
+        look_back = 1
+        batch_size = 1
+
+        # model = Sequential()
+        # model.add(LSTM(4, batch_input_shape=(batch_size, look_back, 1), stateful=True))
+        # model.add(Dense(1))
+        # model.compile(loss='mean_squared_error', optimizer='adam')
+        # for i in range(len(series['date'])):
+        #     model.fit(series[i]['close_lag_0'], series[i]['close_lag_1'], epochs=1, batch_size=batch_size, verbose=2, shuffle=False)
+        #     model.reset_states()
+
 
         model = Sequential()
         model.add(Dense(12, input_dim = 1, activation = 'relu'))
         model.add(Dense(8, activation = 'relu'))
         model.add(Dense(1))
         model.compile(loss='mean_squared_error', optimizer='adam')
-        model.fit(series['close_lag_0'], series['close_lag_1'], epochs=400, batch_size=1, verbose=2)
+        model.fit(series['close_lag_0'], series['close_lag_1'], epochs=3, batch_size=1, verbose=2)
         
         return model
 
 
     def generate_short_term_predictions(self, series, model):
     
+        print('___________________________ERROR____________________________________________________________________')
+        print(series['close_lag_0'])
+        print (series)
+
+        input = series['close_lag_0'][0]
+        self.initial_value = input
+
         short_term_predictions = []
-        float_short_term_predictions = []
-        input = series['close_lag_1'][len(series['close_lag_1'])-1]
-        short_term_predictions.append(model.predict([input])[0])
-        
+        short_term_predictions.append(model.predict([input]))
+
         for i in range(1, 10):
             short_term_predictions.append(model.predict(short_term_predictions[i-1])[0])
-
+        
+        float_short_term_predictions = []
+        
         for i in range(0, len(short_term_predictions)):
             float_short_term_predictions.append(short_term_predictions[i][0])
 
-        data = {'date': self.future_dates, 'short_term_prediction': float_short_term_predictions}
+        self.final_value = float_short_term_predictions[len(short_term_predictions)-1]
+
+        
+        dates = []
+
+        if (self.lag > 0):
+            for i in range(1,11):
+                dates.append(self.series['date'][i])
+
+        if (self.lag == 0):
+            for i in range(1,11):
+                dates.append(str(datetime.date.today() + datetime.timedelta(days=i)))
+
+        print(float_short_term_predictions)
+        
+        data = {'date': dates, 'short_term_prediction': float_short_term_predictions}
+
         return pandas.DataFrame(data=data)
 
+    def calculate_change(self):
+        
+        change = ((self.final_value - self.initial_value) / self.initial_value) * 100
+        
+        print('__________change____________')
+        print(change)
+
+        change = str(change)
+
+        return change
 
 
     def inverse_predictions(self, series):
         
-        # self.train_predictions = self.scaler.inverse_transform(self.train_predictions)
-        # self.trainY = self.scaler.inverse_transform([self.trainY])
-
-        # test_predictions = scaler.inverse_transform(test_predictions)
-        # testY = scaler.inverse_transform([testY])
-        
         short_term_predictions = self.scaler.inverse_transform([series['short_term_prediction']])
         data = {'date': series['date'], 'short_term_prediction': short_term_predictions[0]}
-
+        print('Inverted predictions')
+        print(data)
         return pandas.DataFrame(data=data)
-        # testY = scaler.inverse_transform([testY])
 
-        # calculate root mean squared error
-        # trainScore = math.sqrt(mean_squared_error(trainY[0], train_predictions[:,0]))
-        # print('Train Score: %.2f RMSE' % (trainScore))
-        # testScore = math.sqrt(mean_squared_error(testY[0], test_predictions[:,0]))
-        # print('Test Score: %.2f RMSE' % (testScore))
-    
 

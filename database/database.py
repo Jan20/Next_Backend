@@ -26,7 +26,6 @@ class Database:
     
         print('Database connection established')
 
-
     #################
     ### Functions ###
     #################
@@ -46,8 +45,11 @@ class Database:
     def fetch_assets(self, user_id, markets):
 
         asset_ids = []
+        asset_names = []
+        asset_symbols = []
         market_ids = []
         
+
         for i in range(0, len(markets)):
     
             asset_collection = db.collection(u'users/' + user_id + '/markets/' + markets[i] + '/assets').get()
@@ -55,12 +57,15 @@ class Database:
             for asset in asset_collection:
 
                 asset_dict = asset.to_dict()
-                asset_ids.append(str(asset_dict[u'assetId']))
-                market_ids.append(str(asset_dict[u'marketId']))
+                asset_ids.append(str(asset_dict['assetId']))
+                asset_names.append(str(asset_dict['name']))
+                asset_symbols.append(str(asset_dict['symbol']))
+                market_ids.append(str(asset_dict['marketId']))
 
-        data = {'asset_id': asset_ids, 'market_id': market_ids}
-        
-        return pandas.DataFrame(data=data)
+        data = {'asset_id': asset_ids, 'asset_name': asset_names, 'asset_symbol': asset_symbols,'market_id': market_ids}
+        assets = pandas.DataFrame(data=data)
+        print(assets)
+        return assets
 
 
     def fetch_series(self, user_id, market_id, asset_id):
@@ -79,51 +84,25 @@ class Database:
         data = {'date': dates, 'close': closes}
         
         return pandas.DataFrame(data=data)
-    
 
-    def store_short_term_predictins(self):
+    def store_short_term_predictions(self, user_id, market_id, asset_id, series):
         
-        '''
-        
-        Writing Data to the Firebase Database
-        
-        '''
+        test_predictions_firestore_collection = db.collection('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/short_term_predictions')
 
-        # train_predictions_firestore_collection = db.collection(u'users/pej3fiZSJTf4tNHfNHCKHxa7eJf2/markets/cXdEgLKHka1UfLqC3NVU/assets/GsLZC6PukRyz0JUGMNYi/train_predictions')
-
-        # for i in range(1, len(self.train_predictions)):
-        #     train_predictions_firestore_collection.document(self.train_date_values[i]).set({
-        #         'date': str(self.train_date_values[i]),
-        #         'predicted_close': float(self.train_predictions[i]) 
-        #     })
-
-        # print('trian_predictions have been written to firebase.')
-
-        # Test Predictions
-
-        test_predictions_firestore_collection = db.collection(u'users/'+ self.user_id +'/markets/'+ self.market_id + '/assets/' + self.asset_id + '/short_term_predictions')
-        self.test_date_values = []
-
-        for i in range( 1, 11):
-            self.test_date_values.append(str(datetime.date.today() + datetime.timedelta(days=i)))
-
-        print('--- final predictions ---')
-        print(self.test_date_values)
-        print(self.test_predictions)
-
-        for i in range(2, len(self.test_predictions[0])+1):
-            print(str(self.test_date_values[i-2]))
-            test_predictions_firestore_collection.document(self.test_date_values[i-2]).set({
-                'date': str(self.test_date_values[i-2]),
-                'predicted_close': float(self.test_predictions[0][i-1])
+        for i in range(0, len(series['date'])):
+            print(series['date'][i])
+            test_predictions_firestore_collection.document(series['date'][i]).set({
+                'date': str(series['date'][i]),
+                'predicted_close': float(series['short_term_prediction'][i])
             })
 
-        print('test_predictions have been written to firebase.')
+        print('test_predictions successfully stored in the firestore database')
+
 
 
     def store_short_term_predictions_percentage(self):
 
-        test_predictions_firestore_collection = db.collection(u'users/'+ self.user_id +'/markets/'+ self.market_id + '/assets/' + self.asset_id + '/short_term_predictions_percentage')
+        test_predictions_firestore_collection = db.collection('users/'+ self.user_id +'/markets/'+ self.market_id + '/assets/' + self.asset_id + '/short_term_predictions_percentage')
 
         self.test_date_values = []
 
@@ -144,32 +123,20 @@ class Database:
         print('test_predictions have been written to firebase.')
 
     
-    def store_short_term_prediction(self):
-
-        asset_document = db.document(u'users/'+ self.user_id +'/markets/'+ self.market_id + '/assets/' + self.asset_id)
-
-        self.test_date_values = []
-
-        for i in range( 1, 11):
-            self.test_date_values.append(str(datetime.date.today() + datetime.timedelta(days=i)))
-
-        print('--- final predictions ---')
-        print(self.test_date_values)
-        print(self.test_predictions)
-
-        short_term_prediction = ((float(self.test_predictions[0][len(self.test_predictions[0])-1])-float(self.test_predictions[0][1])) / float(self.test_predictions[0][1])) * 100
+    def store_short_term_prediction(self, user_id, market_id, asset_id, change):
+        
+        asset_document = db.document('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id)
 
         asset_document.update({
-            'short_term_prediction': short_term_prediction
+            'short_term_prediction': change
         })
-        self.model = None
+
         print('test_predictions have been written to firebase.')
 
 
-
-    def store_short_term_test_predictins(self, user_id, market_id, asset_id, series):
+    def store_short_term_test_predictions(self, user_id, market_id, asset_id, series):
         
-        test_predictions_firestore_collection = db.collection(u'users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/short_term_test_predictions')
+        test_predictions_firestore_collection = db.collection('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/short_term_test_predictions')
 
         for i in range(0, len(series['date'])):
             print(series['date'][i])
@@ -179,3 +146,37 @@ class Database:
             })
 
         print('test_predictions successfully stored in the firestore database')
+
+
+    def store_series_to_firestore(self, user_id, asset_id, asset_name, asset_symbol, market_id, series):
+        print('______________________________________')
+        print(series)
+        series_firestore_collection = db.collection('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/series')
+        
+        dates = []
+        closes = []
+        
+        if (len(series) > 250):
+
+            for i in range(0, 200):
+                dates.append(series['date'][i])
+                closes.append(series['close'][i])
+
+        if (len(series) < 251):
+            
+            for i in range(0, len(series)):
+                dates.append(series['date'][i])
+                closes.append(series['close'][i])
+
+        data = {'date': dates, 'close': closes}
+        
+        short_series = pandas.DataFrame(data=data)
+
+        for i in range(0, len(short_series)):
+
+            series_firestore_collection.document(short_series['date'][i]).set({
+                'name': asset_name,
+                'symbol': asset_symbol,
+                'date': str(short_series['date'][i]),
+                'close': float(short_series['close'][i])
+            })

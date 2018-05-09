@@ -193,7 +193,7 @@ class Next:
         print(self.trainX)
         print('________________________________________________________TRAIN Y______________________________________________________________________')
         print(self.trainY)
-        self.model.fit(self.trainX, self.trainY, epochs=400, batch_size=1, verbose=2)
+        self.model.fit(self.trainX, self.trainY, epochs=10, batch_size=1, verbose=2)
 
         '''
 

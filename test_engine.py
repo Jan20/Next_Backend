@@ -14,15 +14,15 @@ import keras.backend.tensorflow_backend
 
 from database.database import Database
 from ann_model.ann_model import ANN_Model
+from alphavantage.alphavantage import AlphaVantage
 
 print(' -------------------------------- ')
-print(' ##    #  ######  #    #  ####### ')
-print(' # #   #  #        #  #      #    ')          
-print(' #  #  #  ######    #        #    ') 
-print(' #   # #  #        #  #      #    ')
-print(' #    ##  ######  #    #     #    ')
+print(' ##    #  ######  #   #  ####### ')
+print(' # #   #  #        # #      #    ')          
+print(' #  #  #  ######    #       #    ') 
+print(' #   # #  #        # #      #    ')
+print(' #    ##  ######  #   #     #    ')
 print(' -------------------------------- ')
-
 
 class Test_Engine:
     
@@ -34,15 +34,36 @@ class Test_Engine:
         markets = self.db.fetch_markets(self.user_id)
         assets = self.db.fetch_assets(self.user_id, markets)
 
-        for i in range(0, len(assets['asset_id'])):
+        for i in range(0, len(assets)):
+            alphaVantage = AlphaVantage()
+            series = alphaVantage.fetchAssetFromAlphaVantage(self.user_id, assets['asset_id'][i], assets['asset_name'][i], assets['asset_symbol'][i], assets['market_id'][i])
 
-            series = self.db.fetch_series(self.user_id, assets['market_id'][i], assets['asset_id'][i])
-            self.db.store_short_term_test_predictins(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 30))
-            self.db.store_short_term_test_predictins(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 20))
-            self.db.store_short_term_test_predictins(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 10))
+            # series = self.db.fetch_series(self.user_id, assets['market_id'][i], assets['asset_id'][i])
+            # print('____________________TEST_________________-')
+            print(series)
+            
+            # if series.empty:
+            #     print('Error: Dataframe is empty')
+            #     return 
 
-                
+            ann_model = ANN_Model()
+
+            # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 60))
+            # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 50))
+            # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 40))
+            # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 30))
+            # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 20))
+            # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ANN_Model().execute(series, 10))
+            self.db.store_short_term_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 0))
+            print(assets['market_id'][i])
+            print(assets['asset_id'][i])
+            self.db.store_short_term_prediction(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.calculate_change())
+            del ann_model    
+          
+    
 
 
 test_engine = Test_Engine()
-test_engine.execute()
+test_engine.execute()   
+
+
