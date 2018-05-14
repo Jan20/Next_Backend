@@ -8,33 +8,25 @@ cred = credentials.Certificate('./database/service_account.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-
 class Database:
-    
+
     #################
     ### Variables ###
     #################
+
     user_id = None
     market_id = None
     asset_id = None
-    
-
-    ###################
-    ### Constructor ###
-    ###################
-    def __init__(self):
-    
-        print('Database connection established')
 
     #################
     ### Functions ###
     #################
+    
     def fetch_markets(self, user_id):
 
         markets = []
-        market_collection = db.collection('users/' + user_id + '/markets').get()
 
-        for market in market_collection:
+        for market in db.collection('users/' + user_id + '/markets').get():
             
             market_dict = market.to_dict()
             markets.append(str(market_dict[u'marketId']))
@@ -44,17 +36,11 @@ class Database:
 
     def fetch_assets(self, user_id, markets):
 
-        asset_ids = []
-        asset_names = []
-        asset_symbols = []
-        market_ids = []
-        
+        market_ids, asset_ids, asset_names, asset_symbols = [], [], [], []
 
         for i in range(0, len(markets)):
-    
-            asset_collection = db.collection(u'users/' + user_id + '/markets/' + markets[i] + '/assets').get()
 
-            for asset in asset_collection:
+            for asset in db.collection(u'users/' + user_id + '/markets/' + markets[i] + '/assets').get():
 
                 asset_dict = asset.to_dict()
                 asset_ids.append(str(asset_dict['assetId']))
@@ -62,42 +48,34 @@ class Database:
                 asset_symbols.append(str(asset_dict['symbol']))
                 market_ids.append(str(asset_dict['marketId']))
 
-        data = {'asset_id': asset_ids, 'asset_name': asset_names, 'asset_symbol': asset_symbols,'market_id': market_ids}
-        assets = pandas.DataFrame(data=data)
-        print(assets)
-        return assets
+        return pandas.DataFrame(data={'asset_id': asset_ids, 'asset_name': asset_names, 'asset_symbol': asset_symbols,'market_id': market_ids})
 
 
     def fetch_series(self, user_id, market_id, asset_id):
         
-        dates = []
-        closes = []
+        dates, closes = [], []
 
-        series_collection = db.collection('users/' + user_id + '/markets/' + market_id + '/assets/' + asset_id + '/series').get()
-
-        for entry in series_collection:
+        for entry in db.collection('users/' + user_id + '/markets/' + market_id + '/assets/' + asset_id + '/series').get():
 
             entry_dict = entry.to_dict()
             dates.append(str(entry_dict[u'date']))
             closes.append(float(entry_dict[u'close']))
         
-        data = {'date': dates, 'close': closes}
-        
-        return pandas.DataFrame(data=data)
+        return pandas.DataFrame(data={'date': dates, 'close': closes})
+
 
     def store_short_term_predictions(self, user_id, market_id, asset_id, series):
         
         test_predictions_firestore_collection = db.collection('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/short_term_predictions')
 
         for i in range(0, len(series['date'])):
-            print(series['date'][i])
+
             test_predictions_firestore_collection.document(series['date'][i]).set({
                 'date': str(series['date'][i]),
                 'predicted_close': float(series['short_term_prediction'][i])
             })
 
         print('test_predictions successfully stored in the firestore database')
-
 
 
     def store_short_term_predictions_percentage(self):
@@ -108,10 +86,6 @@ class Database:
 
         for i in range( 1, 11):
             self.test_date_values.append(str(datetime.date.today() + datetime.timedelta(days=i)))
-
-        print('--- final predictions ---')
-        print(self.test_date_values)
-        print(self.test_predictions)
 
         for i in range(2, len(self.test_predictions[0])+1):
             print(str(self.test_date_values[i-2]))
@@ -149,8 +123,7 @@ class Database:
 
 
     def store_series_to_firestore(self, user_id, asset_id, asset_name, asset_symbol, market_id, series):
-        print('______________________________________')
-        print(series)
+
         series_firestore_collection = db.collection('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/series')
         
         dates = []
@@ -180,3 +153,13 @@ class Database:
                 'date': str(short_series['date'][i]),
                 'close': float(short_series['close'][i])
             })
+
+
+    def deleteCollection(self, user_id, market_id, asset_id, collection):
+
+        for entry in db.collection('users/' + user_id + '/markets/' + market_id + '/assets/' + asset_id + '/' + collection).get():
+            
+            entry_dict = entry.to_dict()
+            db.document('users/' + user_id + '/markets/' + market_id + '/assets/' + asset_id + '/' + collection + '/' + entry_dict['date']).delete()
+
+        print(collection + ' collection was successfully deleted.')

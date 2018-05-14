@@ -1,7 +1,6 @@
 import numpy as numpy
 import matplotlib.pyplot as plt
 import pandas
-import math
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
@@ -14,6 +13,7 @@ import keras.backend.tensorflow_backend
 
 from database.database import Database
 from ann_model.ann_model import ANN_Model
+from math_library.math_library import Math
 from alphavantage.alphavantage import AlphaVantage
 
 print(' -------------------------------- ')
@@ -24,7 +24,7 @@ print(' #   # #  #        # #      #     ')
 print(' #    ##  ######  #   #     #     ')
 print(' -------------------------------- ')
 
-class Test_Engine:
+class Next_Core:
     
     user_id = 'pej3fiZSJTf4tNHfNHCKHxa7eJf2'
     db = Database()
@@ -37,22 +37,23 @@ class Test_Engine:
         for i in range(0, len(assets)):
 
             alphaVantage = AlphaVantage()
-            series = alphaVantage.fetchAssetFromAlphaVantage(self.user_id, assets['asset_id'][i], assets['asset_name'][i], assets['asset_symbol'][i], assets['market_id'][i])
+            series = alphaVantage.fetch_asset_from_alpha_vantage(self.user_id, assets['asset_id'][i], assets['asset_name'][i], assets['asset_symbol'][i], assets['market_id'][i])
+            math = Math()
 
-
+            self.db.deleteCollection(self.user_id, assets['market_id'][i], assets['asset_id'][i], 'short_term_predictions')
+            self.db.deleteCollection(self.user_id, assets['market_id'][i], assets['asset_id'][i], 'short_term_test_predictions')
+            
+            ann_model = ANN_Model()
             # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 60))
-            # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 50))
+            self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 50))
             # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 40))
             # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 30))
-            ann_model = ANN_Model()
             # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 20))
-            self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 10))
+            # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 10))
             self.db.store_short_term_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 0))
-            self.db.store_short_term_prediction(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.calculate_change())            
+            self.db.store_short_term_prediction(self.user_id, assets['market_id'][i], assets['asset_id'][i], math.percentage_change(ann_model.initial_value, ann_model.final_value))            
             del ann_model    
 
-
-test_engine = Test_Engine()
-test_engine.execute()   
+Next_Core().execute()   
 
 
