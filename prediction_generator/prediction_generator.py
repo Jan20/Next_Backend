@@ -9,11 +9,8 @@ import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Activation, Dropout
 from keras import backend as K
-from sklearn.metrics import mean_squared_error
-from database.database import Database
-from pipeline.pipeline import Pipeline
 
-class PredictionGenerator:
+class Prediction_Generator:
     
     initial_value = None
     final_value = None

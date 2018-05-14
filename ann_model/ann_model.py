@@ -12,9 +12,13 @@ from keras import backend as K
 from sklearn.metrics import mean_squared_error
 from database.database import Database
 from pipeline.pipeline import Pipeline
-from prediction.prediction import PredictionGenerator
+from prediction_generator.prediction_generator import Prediction_Generator
 
 class ANN_Model:
+    
+    def __init__(self):
+
+        print('Hello')
     
     ###############
     ## Variables ##

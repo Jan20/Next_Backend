@@ -10,11 +10,10 @@ import datetime
 from keras import backend as K
 import tensorflow as tf
 import keras.backend.tensorflow_backend
-
-from database.database import Database
 from ann_model.ann_model import ANN_Model
-from math_library.math_library import Math
+from math_library.math_library import Math_Library
 from alphavantage.alphavantage import AlphaVantage
+from database.database import Database
 
 print(' -------------------------------- ')
 print(' ##    #  ######  #   #  #######  ')
@@ -24,7 +23,7 @@ print(' #   # #  #        # #      #     ')
 print(' #    ##  ######  #   #     #     ')
 print(' -------------------------------- ')
 
-class Next_Core:
+class Core:
     
     user_id = 'pej3fiZSJTf4tNHfNHCKHxa7eJf2'
     db = Database()
@@ -54,6 +53,6 @@ class Next_Core:
             self.db.store_short_term_prediction(self.user_id, assets['market_id'][i], assets['asset_id'][i], math.percentage_change(ann_model.initial_value, ann_model.final_value))            
             del ann_model    
 
-Next_Core().execute()   
+Core().execute()   
 
 

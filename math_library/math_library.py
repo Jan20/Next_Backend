@@ -1,5 +1,4 @@
-class Math:
-
+class Math_Library:
 
     def percentage_change(self, x, y):
 

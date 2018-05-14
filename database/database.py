@@ -29,7 +29,7 @@ class Database:
         for market in db.collection('users/' + user_id + '/markets').get():
             
             market_dict = market.to_dict()
-            markets.append(str(market_dict[u'marketId']))
+            markets.append(str(market_dict['marketId']))
 
         return markets
 
@@ -40,7 +40,7 @@ class Database:
 
         for i in range(0, len(markets)):
 
-            for asset in db.collection(u'users/' + user_id + '/markets/' + markets[i] + '/assets').get():
+            for asset in db.collection('users/' + user_id + '/markets/' + markets[i] + '/assets').get():
 
                 asset_dict = asset.to_dict()
                 asset_ids.append(str(asset_dict['assetId']))

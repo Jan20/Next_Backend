@@ -1,9 +1,9 @@
 import unittest
 import pandas
-from pandas import DataFrame
 import numpy.testing as npt
-from pipeline import Pipeline
-from test_sets.test_series import Test_Series
+from Test_Sets import Test_Series
+from pandas import DataFrame
+from Pipeline import Pipeline
 
 class Test_Pipeline(unittest.TestCase):
 
