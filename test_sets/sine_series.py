@@ -8,9 +8,9 @@ class Sine_Series:
 
     def create_series(self):
         
-        Fs = 4000
+        Fs = 2000
         f = 5
-        sample = 4000
+        sample = 2000
         x = numpy.arange(sample)
         print
         y = numpy.sin(2 * numpy.pi * f * x / Fs)
@@ -20,7 +20,7 @@ class Sine_Series:
         # plt.show()
 
         dates = []
-        for i in range(0, 4000):
+        for i in range(0, 2000):
             dates.append(str(datetime.date.today() - datetime.timedelta(days=i)))
 
         z = pandas.DataFrame(data={'date': dates, 'close': y})

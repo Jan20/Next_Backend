@@ -37,7 +37,7 @@ class Core:
 
             alphaVantage = AlphaVantage()
             series = alphaVantage.fetch_asset_from_alpha_vantage(self.user_id, assets['asset_id'][i], assets['asset_name'][i], assets['asset_symbol'][i], assets['market_id'][i])
-            math = Math()
+            math_library = Math_Library()
 
             self.db.deleteCollection(self.user_id, assets['market_id'][i], assets['asset_id'][i], 'short_term_predictions')
             self.db.deleteCollection(self.user_id, assets['market_id'][i], assets['asset_id'][i], 'short_term_test_predictions')
@@ -50,7 +50,7 @@ class Core:
             # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 20))
             # self.db.store_short_term_test_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 10))
             self.db.store_short_term_predictions(self.user_id, assets['market_id'][i], assets['asset_id'][i], ann_model.execute(series, 0))
-            self.db.store_short_term_prediction(self.user_id, assets['market_id'][i], assets['asset_id'][i], math.percentage_change(ann_model.initial_value, ann_model.final_value))            
+            self.db.store_short_term_prediction(self.user_id, assets['market_id'][i], assets['asset_id'][i], math_library.percentage_change(ann_model.initial_value, ann_model.final_value))            
             del ann_model    
 
 Core().execute()   

@@ -20,7 +20,7 @@ class Pipeline:
         dates, closes = [], []
 
         if lag > 0:
-            for i in range(lag - 10, lag):
+            for i in range(lag - 50, lag):
                 
                 dates.append(series['date'][i])
                 closes.append(series['close'][i])

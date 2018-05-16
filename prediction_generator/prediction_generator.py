@@ -52,7 +52,7 @@ class Prediction_Generator:
         dates = []
 
         if (len(lagged_series) > 0):
-            for i in range(49, 0, -1):
+            for i in range(49, -1, -1):
                 dates.append(lagged_series['date'][i])
 
         print('dates length: '+ str(len(dates)))
