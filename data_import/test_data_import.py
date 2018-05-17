@@ -3,9 +3,9 @@ import pandas
 import numpy.testing as npt
 from Test_Sets import Test_Series
 from pandas import DataFrame
-from Pipeline import Pipeline
+from Import import Pipeline
 
-class Test_Pipeline(unittest.TestCase):
+class Test_Data_Import(unittest.TestCase):
 
     def test_get_lagged_series(self):
             

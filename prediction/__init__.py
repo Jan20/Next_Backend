@@ -1,0 +1,1 @@
+from prediction.prediction import Prediction

@@ -1,2 +1,0 @@
-from test_sets.test_series import Test_Series
-from test_sets.sine_series import Sine_Series

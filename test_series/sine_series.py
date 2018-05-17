@@ -14,21 +14,20 @@ class Sine_Series:
         x = numpy.arange(sample)
         print
         y = numpy.sin(2 * numpy.pi * f * x / Fs)
-        plt.plot(x, y)
-        plt.xlabel('sample(n)')
-        plt.ylabel('voltage(V)')
+        # plt.plot(x, y)
+        # plt.xlabel('sample(n)')
+        # plt.ylabel('voltage(V)')
         # plt.show()
 
         dates = []
         for i in range(0, 2000):
             dates.append(str(datetime.date.today() - datetime.timedelta(days=i)))
 
-        z = pandas.DataFrame(data={'date': dates, 'close': y})
-        print(z)
+        df = pandas.DataFrame(data={'date': dates, 'close': y})
+        # print(df)
         # plt.show(z)
-        return z
+        return df
 
-Sine_Series().create_series()
 
 
 

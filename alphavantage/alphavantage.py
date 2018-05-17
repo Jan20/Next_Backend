@@ -2,7 +2,7 @@ import pandas
 import urllib.request
 import json
 from database.database import Database
-from test_sets.sine_series import Sine_Series
+from test_series.sine_series import Sine_Series
  
 class AlphaVantage:
 
