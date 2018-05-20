@@ -18,10 +18,10 @@ class Database:
     market_id = None
     asset_id = None
 
-    #################
-    ### Functions ###
-    #################
-    
+    #######################
+    ### Fetch Functions ###
+    #######################
+
     def fetch_markets(self, user_id):
 
         markets = []
@@ -62,6 +62,40 @@ class Database:
             closes.append(float(entry_dict[u'close']))
         
         return pandas.DataFrame(data={'date': dates, 'close': closes})
+
+    #######################
+    ### Write Functions ###
+    #######################
+
+    def store_series(self, user_id, market_id, asset_id, series_name, series):
+        
+        firestore_collection = db.collection('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/' + series_name)
+
+        for i in range(0, len(series['date'])):
+    
+            print(str(series['date'][i]))
+
+            firestore_collection.document(series['date'][i]).set({
+            
+                'date': str(series['date'][i]),
+                'value': float(series['value'][i])
+        
+            })
+
+        print('Series has been saved at Firestore.')
+
+
+    def store_value(self, user_id, market_id, asset_id, value_name, value):
+        
+        asset_document = db.document('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id)
+
+        asset_document.update({
+        
+            value_name: value
+        
+        })
+
+        print('test_predictions have been written to firebase.')
 
 
     def store_short_term_predictions(self, user_id, market_id, asset_id, series):
@@ -120,39 +154,6 @@ class Database:
             })
 
         print('test_predictions successfully stored in the firestore database')
-
-
-    def store_series_to_firestore(self, user_id, asset_id, asset_name, asset_symbol, market_id, series):
-
-        series_firestore_collection = db.collection('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/series')
-        
-        dates = []
-        closes = []
-        
-        if (len(series) > 250):
-
-            for i in range(0, 200):
-                dates.append(series['date'][i])
-                closes.append(series['close'][i])
-
-        if (len(series) < 251):
-            
-            for i in range(0, len(series)):
-                dates.append(series['date'][i])
-                closes.append(series['close'][i])
-
-        data = {'date': dates, 'close': closes}
-        
-        short_series = pandas.DataFrame(data=data)
-
-        for i in range(0, len(short_series)):
-
-            series_firestore_collection.document(short_series['date'][i]).set({
-                'name': asset_name,
-                'symbol': asset_symbol,
-                'date': str(short_series['date'][i]),
-                'close': float(short_series['close'][i])
-            })
 
 
     def deleteCollection(self, user_id, market_id, asset_id, collection):

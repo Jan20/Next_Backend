@@ -1,4 +1,4 @@
-import numpy as numpy
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas
 from keras.models import Sequential
@@ -10,7 +10,6 @@ import datetime
 from keras import backend as K
 import tensorflow as tf
 import keras.backend.tensorflow_backend
-from model import Model
 from math_library.math_library import Math_Library
 from alphavantage.alphavantage import AlphaVantage
 from database.database import Database
@@ -20,6 +19,10 @@ from test_series import Linear_Series
 from data_import import Data_Import
 from visualization import Visualization
 from prediction import Prediction
+from model import Model
+from model import Linear_Model
+from model import Sine_Model
+from model import Lstm_Model
 
 print(' -------------------------------- ')
 print(' ##    #  ######  #   #  #######  ')
@@ -60,8 +63,7 @@ print(' -------------------------------- ')
 #             del model    
 
 # Core().execute()   
-
-
+    # x_train, y_train, x_test, y_test = Data_Import().load_data(df, 50, False)
 
 
 if __name__=='__main__':
@@ -72,25 +74,68 @@ if __name__=='__main__':
 
     print('> Loading data... ')
     
-    # df = Sine_Series().create_series()
-    df = Linear_Series().create_series()
+    df = Sine_Series().create_series()
+    scaler = MinMaxScaler(feature_range=(0, 1))
 
-    print(df)
-
-    x_train, y_train, x_test, y_test = Data_Import().load_data(df, 50, False)
-        
-    model = Model()
+    # model = Sine_Model()
+    model = Lstm_Model()
     model = model.build_model()
-    model.fit(x_train, y_train, batch_size=512, epochs=epochs, validation_split=0.05)
+
+
+
+    close_scaled = scaler.fit_transform(pandas.DataFrame(df['close'][0:1000]))
+    date_scaled = scaler.fit_transform(pandas.DataFrame(df['date'][0:1000]))
+
+
+    model.fit(close_scaled, df['date'][0:1000], epochs=100, batch_size=512)
+
+
+
+    prediction = model.predict(date_scaled, batch_size=1)
+    test = model.predict(df['close'][0:1000], batch_size=1)
+
+
+    prediction = scaler.inverse_transform(prediction)
+    test = scaler.inverse_transform(test)
+
+
+
+
+
+
+
+    plt.plot(df['close'][0:1000], label='real')
+    plt.plot(test, label='test')
+    plt.plot(prediction, label='prediction')
+    plt.legend()
+    plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # model.fit(x_train, y_train, batch_size=512, epochs=epochs, validation_split=0.05)
     
 
-    predictions = Prediction().predict_sequences_multiple(model, x_test, seq_len, 50)
+    # predictions = Prediction().predict_sequences_multiple(model, x_test, seq_len, 50)
     # predictions = Prediction().predict_sequence_full(model, x_test, seq_len)
     # predictions = Prediction().predict_point_by_point(model, x_test)        
 
-    print('Training duration (s) : ', time.time() - global_start_time)
-    Visualization().plot_results_multiple(predictions, y_test, 50)
+    # print('Training duration (s) : ', time.time() - global_start_time)
+    # Visualization().plot_results_multiple(predictions, y_test, 50)
 
-    Visualization().display_series(df)
+    # Visualization().display_series(df)
 
 

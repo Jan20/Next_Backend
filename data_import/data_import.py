@@ -44,7 +44,7 @@ class Data_Import:
     # Tested
     def normalize_data(self, series):
         
-        return self.scaler.fit_transform(DataFrame(series['close']))
+        return self.scaler.fit_transform(series['close'])
 
     # convert series to supervised learning
     def series_to_supervised(self, data, n_in=1, n_out=1, dropnan=True):

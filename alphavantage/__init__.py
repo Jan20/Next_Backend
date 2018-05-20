@@ -1,1 +1,1 @@
-from alphavantage import alphavantage
+from alphavantage.alphavantage import AlphaVantage

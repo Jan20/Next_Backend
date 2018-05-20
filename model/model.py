@@ -22,14 +22,23 @@ class Model:
     ###############
     def build_model(self):
         
-        model = Sequential()
-        model.add(LSTM(input_shape=(50, 1), units=1, return_sequences=False))
-        # model.add(LSTM(100,return_sequences=False))
-        model.add(Dense(units=1))
-        model.add(Activation("linear"))
+        # model = Sequential()
+        # model.add(LSTM(input_shape=(50, 1), units=1, return_sequences=False))
+        # # model.add(LSTM(100,return_sequences=False))
+        # model.add(Dense(units=1))
+        # model.add(Activation("linear"))
 
-        start = time.time()
-        model.compile(loss="mse", optimizer="rmsprop")
-        print("> Compilation Time : ", time.time() - start)
+        # start = time.time()
+        # model.compile(loss="mse", optimizer="rmsprop")
+        # print("> Compilation Time : ", time.time() - start)
         
+        # return model
+
+
+        # create model
+        model = Sequential()
+        model.add(Dense(13, input_dim=13, kernel_initializer='normal', activation='relu'))
+        model.add(Dense(1, kernel_initializer='normal'))
+        # Compile model
+        model.compile(loss='mean_squared_error', optimizer='adam')
         return model

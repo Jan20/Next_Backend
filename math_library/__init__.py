@@ -1,1 +1,1 @@
-from math_library import math_library
+from math_library.math_library import Math_Library
