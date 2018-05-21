@@ -3,7 +3,6 @@ import pandas
 import matplotlib.pyplot as plt
 from math_library.math_library import Math_Library 
 
-
 class Momentum:
 
     def create_prediction(self, series):
@@ -28,15 +27,16 @@ class Momentum:
             print(i)
             print(sharpe_ratio) 
 
-            i = i + 6
+            i = i + 7
 
 
         temp = pandas.DataFrame(data={'date':dates, 'value':values})
+
         print(temp)
 
-        plt.plot(temp['value'], label='Value')
-        plt.legend()
-        plt.show()
+        # plt.plot(temp['value'], label='Value')
+        # plt.legend()
+        # plt.show()
 
         return temp
         

@@ -27,7 +27,7 @@ class Sine_Series:
         for i in range(-500,500):
             dates.append(i / 500)
 
-        df = pandas.DataFrame(data={'date': dates, 'close': y})
+        df = pandas.DataFrame(data={'date': dates, 'value': y})
         # print(df)
         # plt.show(z)
         return df

@@ -18,33 +18,33 @@ class Data_Import:
 
     def get_lagged_series(self, series, lag):
             
-        dates, closes = [], []
+        dates, values = [], []
 
         if lag > 0:
             for i in range(lag - 50, lag):
                 
                 dates.append(series['date'][i])
-                closes.append(series['close'][i])
+                values.append(series['value'][i])
 
-        return pandas.DataFrame(data={'date': dates, 'close': closes})
+        return pandas.DataFrame(data={'date': dates, 'value': values})
 
 
     def reduce_series(self, series, lag):
 
-        dates, closes = [], []
+        dates, values = [], []
 
         for i in range(0, len(series) - lag):
 
             dates.append(series['date'][i])
-            closes.append(series['close'][i])
+            values.append(series['value'][i])
 
-        return pandas.DataFrame(data={'date': dates, 'close': closes})
+        return pandas.DataFrame(data={'date': dates, 'value': values})
 
         
     # Tested
     def normalize_data(self, series):
         
-        return self.scaler.fit_transform(series['close'])
+        return self.scaler.fit_transform(series['value'])
 
     # convert series to supervised learning
     def series_to_supervised(self, data, n_in=1, n_out=1, dropnan=True):
@@ -148,7 +148,7 @@ class Data_Import:
 
     def load_data(self, data, seq_len, normalise_window):
 
-        data = data['close']
+        data = data['value']
         # print('----------- DATA ----------------')
         # print(data)
 

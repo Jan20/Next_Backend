@@ -38,7 +38,7 @@ class Test_Series:
 
     ]
 
-    closes = [
+    values = [
 
         188.59,
         190.04, 
@@ -73,7 +73,7 @@ class Test_Series:
 
     ]
 
-    test_series = pandas.DataFrame(data={'date': dates, 'close': closes})
+    test_series = pandas.DataFrame(data={'date': dates, 'value': values})
 
     def get_test_series(self):
 

@@ -17,7 +17,7 @@ class Visualization:
 
         # print(dates)
 
-        plt.plot(df['close'])
+        plt.plot(df['value'])
 
 
         plt.show()

@@ -9,8 +9,8 @@ class Math_Library:
     
     def sharpe_ratio(self, series, i):
         
-        excess_return = series['close'][i] - series['close'][i+6]
-        standard_deviation = numpy.std(series['close'].head(len(series)))
+        excess_return = series['value'][i] - series['value'][i+6]
+        standard_deviation = numpy.std(series['value'].head(len(series)))
 
         return excess_return / standard_deviation
 

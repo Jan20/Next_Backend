@@ -83,16 +83,16 @@ if __name__=='__main__':
 
 
 
-    close_scaled = scaler.fit_transform(pandas.DataFrame(df['close'][0:1000]))
+    value_scaled = scaler.fit_transform(pandas.DataFrame(df['value'][0:1000]))
     date_scaled = scaler.fit_transform(pandas.DataFrame(df['date'][0:1000]))
 
 
-    model.fit(close_scaled, df['date'][0:1000], epochs=100, batch_size=512)
+    model.fit(value_scaled, df['date'][0:1000], epochs=100, batch_size=512)
 
 
 
     prediction = model.predict(date_scaled, batch_size=1)
-    test = model.predict(df['close'][0:1000], batch_size=1)
+    test = model.predict(df['value'][0:1000], batch_size=1)
 
 
     prediction = scaler.inverse_transform(prediction)
@@ -104,7 +104,7 @@ if __name__=='__main__':
 
 
 
-    plt.plot(df['close'][0:1000], label='real')
+    plt.plot(df['value'][0:1000], label='real')
     plt.plot(test, label='test')
     plt.plot(prediction, label='prediction')
     plt.legend()

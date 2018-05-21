@@ -5,10 +5,10 @@ class Linear_Series:
 
     def create_series(self):
 
-        closes = []
+        values = []
         for i in range(0, 1000):
             
-            closes.append(i*4)
+            values.append(i*4)
 
         dates = []
         for i in range(0, 1000):
@@ -20,7 +20,7 @@ class Linear_Series:
             
             dates.append(i)
 
-        df = pandas.DataFrame(data={'date': dates, 'close': closes})
+        df = pandas.DataFrame(data={'date': dates, 'value': values})
 
         return df
         

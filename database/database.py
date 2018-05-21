@@ -43,7 +43,7 @@ class Database:
             for asset in db.collection('users/' + user_id + '/markets/' + markets[i] + '/assets').get():
 
                 asset_dict = asset.to_dict()
-                asset_ids.append(str(asset_dict['assetId']))
+                asset_ids.append(str(asset_dict['symbol']))
                 asset_names.append(str(asset_dict['name']))
                 asset_symbols.append(str(asset_dict['symbol']))
                 market_ids.append(str(asset_dict['marketId']))
@@ -53,15 +53,15 @@ class Database:
 
     def fetch_series(self, user_id, market_id, asset_id):
         
-        dates, closes = [], []
+        dates, values = [], []
 
         for entry in db.collection('users/' + user_id + '/markets/' + market_id + '/assets/' + asset_id + '/series').get():
 
             entry_dict = entry.to_dict()
             dates.append(str(entry_dict[u'date']))
-            closes.append(float(entry_dict[u'close']))
+            values.append(float(entry_dict[u'value']))
         
-        return pandas.DataFrame(data={'date': dates, 'close': closes})
+        return pandas.DataFrame(data={'date': dates, 'value': values})
 
     #######################
     ### Write Functions ###
@@ -106,7 +106,7 @@ class Database:
 
             test_predictions_firestore_collection.document(series['date'][i]).set({
                 'date': str(series['date'][i]),
-                'predicted_close': float(series['short_term_prediction'][i])
+                'predicted_value': float(series['short_term_prediction'][i])
             })
 
         print('test_predictions successfully stored in the firestore database')
@@ -125,7 +125,7 @@ class Database:
             print(str(self.test_date_values[i-2]))
             test_predictions_firestore_collection.document(self.test_date_values[i-2]).set({
                 'date': str(self.test_date_values[i-2]),
-                'predicted_close': ((float(self.test_predictions[0][i-1])-float(self.test_predictions[0][i-2])) / float(self.test_predictions[0][i-2])) * 100
+                'predicted_value': ((float(self.test_predictions[0][i-1])-float(self.test_predictions[0][i-2])) / float(self.test_predictions[0][i-2])) * 100
             })
 
         print('test_predictions have been written to firebase.')
@@ -150,7 +150,7 @@ class Database:
             print(series['date'][i])
             test_predictions_firestore_collection.document(series['date'][i]).set({
                 'date': str(series['date'][i]),
-                'predicted_close': float(series['short_term_prediction'][i])
+                'predicted_value': float(series['short_term_prediction'][i])
             })
 
         print('test_predictions successfully stored in the firestore database')
@@ -164,3 +164,13 @@ class Database:
             db.document('users/' + user_id + '/markets/' + market_id + '/assets/' + asset_id + '/' + collection + '/' + entry_dict['date']).delete()
 
         print(collection + ' collection was successfully deleted.')
+
+
+    def store_market(self, user_id, market_id, name, symbol):
+
+        data = {'name': name, 'symbol': symbol, 'marketId': market_id}
+
+        db.collection('users/' + user_id + '/markets/' + market_id + '/assets').document(symbol).set(data)
+
+
+

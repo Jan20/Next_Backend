@@ -28,7 +28,7 @@ class Test_Data_Import(unittest.TestCase):
 
         ]
 
-        closes = [
+        values = [
 
             188.59,
             190.04,
@@ -43,7 +43,7 @@ class Test_Data_Import(unittest.TestCase):
 
         ]
 
-        test_result = pandas.DataFrame(data={'date': dates, 'close': closes})
+        test_result = pandas.DataFrame(data={'date': dates, 'value': values})
 
         print(test_result)
         print(Pipeline().get_lag_series(Test_Series().get_test_series(), 10))
@@ -69,7 +69,7 @@ class Test_Data_Import(unittest.TestCase):
 
         ]
 
-        closes = [
+        values = [
 
             162.32,  
             164.22,  
@@ -84,7 +84,7 @@ class Test_Data_Import(unittest.TestCase):
 
         ]
 
-        test_result = pandas.DataFrame(data={'date': dates, 'close': closes})
+        test_result = pandas.DataFrame(data={'date': dates, 'value': values})
 
         print(test_result)
         print(Pipeline().get_lag_series(Test_Series().get_test_series(),20))
