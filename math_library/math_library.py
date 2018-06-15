@@ -7,12 +7,18 @@ class Math_Library:
         return ((y - x) / x) * 100
 
     
-    def sharpe_ratio(self, series, i):
+    def sharpe_ratio(self, series):
         
-        excess_return = series['value'][i] - series['value'][i+6]
+        excess_return = series['value'][len(series)-1] - series['value'][0]
         standard_deviation = numpy.std(series['value'].head(len(series)))
 
-        return excess_return / standard_deviation
+        result = 0
+
+        if (standard_deviation != 0):
+            
+            result = excess_return / standard_deviation
+
+        return result
 
         
 

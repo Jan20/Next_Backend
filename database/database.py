@@ -71,16 +71,35 @@ class Database:
         
         firestore_collection = db.collection('users/'+ user_id +'/markets/'+ market_id + '/assets/' + asset_id + '/' + series_name)
 
-        for i in range(0, len(series['date'])):
-    
-            print(str(series['date'][i]))
+        if (series_name == 'series'):
 
-            firestore_collection.document(series['date'][i]).set({
+            dates, values = [], []
+
+            for entry in firestore_collection.get():
+
+                entry_dict = entry.to_dict()
+                dates.append(entry_dict['date'])
+                values.append(entry_dict['value'])
+
+            entries = pandas.DataFrame(data={'date': dates, 'value': values})
             
-                'date': str(series['date'][i]),
-                'value': float(series['value'][i])
+            series = series[(~series.date.isin(entries.date))]
+
+
+            print('------------- Resulting Series ---------------')
+            print(series)
+
+
+            for i in range(0, len(series['date'])):
         
-            })
+                print(str(series['date'][i]))
+
+                firestore_collection.document(series['date'][i]).set({
+                
+                    'date': str(series['date'][i]),
+                    'value': float(series['value'][i])
+            
+                })
 
         print('Series has been saved at Firestore.')
 

@@ -4,7 +4,6 @@ from database import Database
 
 class Market_Import:
 
-
     def import_market(self):
 
         user_id = 'pej3fiZSJTf4tNHfNHCKHxa7eJf2'
