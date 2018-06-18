@@ -4,25 +4,33 @@ from database import Database
 
 class Market_Import:
 
-    def import_market(self):
+    ###############
+    ## Variables ##
+    ###############
 
-        user_id = 'pej3fiZSJTf4tNHfNHCKHxa7eJf2'
+    database = Database()
+    markets = database.fetch_markets()
 
-        database = Database()
-        markets = database.fetch_markets(user_id)
 
-        with open('nasdaq.json') as f:
+    def create_market(self, name, category, market_id):
+        
+        self.database.create_market(name, category, market_id)
 
-            data = json.load(f)
+
+    def import_market(self, market_id, json_path):
+
+        with open(json_path) as nasdaq:
+
+            data = json.load(nasdaq)
 
             pprint(data['corporations'])
 
-            for i in range(0, len(markets)):
+            for i in range(0, len(data['corporations'])):
+                
+                print(data['corporations'][i])
+                self.database.create_asset(data['corporations'][i]['name'], data['corporations'][i]['symbol'], market_id)
 
-                for j in range(0, len(data['corporations'])):
-                    
-                    print(data['corporations'][j])
-                    print(markets[i])
-                    database.store_market(user_id, markets[i], data['corporations'][j]['name'], data['corporations'][j]['symbol'])
+market_import = Market_Import()
 
-Market_Import().import_market()
+market_import.create_market('Nasdaq', 'American Tech Index', 'nasdaq')
+market_import.import_market('nasdaq', 'import/nasdaq.json')

@@ -1,22 +1,34 @@
 from alphavantage import AlphaVantage
 from database import Database
+from datetime import datetime, timedelta
+from pandas import pandas
+
 
 class Run_AlphaVantage:
     
-    def run(self):
-
-        user_id = 'pej3fiZSJTf4tNHfNHCKHxa7eJf2'
+    def fetch_assets(self, market_id):
 
         alphaVantage = AlphaVantage()
         database = Database()
 
-        markets = database.fetch_markets(user_id)
-        assets = database.fetch_assets(user_id, markets)
+        assets = database.fetch_assets(market_id)
+
+        print(assets)
 
         for i in range(0, len(assets)):
             
-            series = alphaVantage.fetch_asset(user_id, assets['market_id'][i], assets['asset_id'][i], assets['asset_symbol'][i])
+            existing_series = database.fetch_series(market_id, assets['symbol'][i])
 
-            database.store_series(user_id, assets['market_id'][i], assets['asset_id'][i], 'series', series)
+            date_string = '{date:%Y-%m-%d}'.format(date=datetime.today() - timedelta(days=3))
 
-Run_AlphaVantage().run()
+            print(existing_series.loc[existing_series['date'] == date_string])
+
+            if existing_series.loc[existing_series['date'] == date_string].empty:
+         
+                series = alphaVantage.fetch_series(assets['symbol'][i])
+                database.store_series(market_id, assets['symbol'][i], 'series', series)
+
+
+
+
+Run_AlphaVantage().fetch_assets('nasdaq')
