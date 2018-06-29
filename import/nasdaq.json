@@ -102,10 +102,6 @@
             "name": "Cisco Systems"
         },
         {
-            "symbol": "CTRX",
-            "name": "Catamaran"
-        },
-        {
             "symbol": "CTSH",
             "name": "Cognizant Technology Solutions"
         },
@@ -174,10 +170,6 @@
             "name": "Gilead Sciences"
         },
         {
-            "symbol": "GMCR",
-            "name": "Keurig Green Mountain"
-        },
-        {
             "symbol": "GOOG",
             "name": "Google"
         },
@@ -214,16 +206,8 @@
             "name": "KLA-Tencor"
         },
         {
-            "symbol": "KRFT",
-            "name": "Kraft Foods Group"
-        },
-        {
             "symbol": "LBTYA",
             "name": "Liberty Global plc"
-        },
-        {
-            "symbol": "LINTA",
-            "name": "Liberty Interactive"
         },
         {
             "symbol": "LLTC",
@@ -294,10 +278,6 @@
             "name": "PACCAR"
         },
         {
-            "symbol": "PCLN",
-            "name": "The Priceline Group"
-        },
-        {
             "symbol": "QCOM",
             "name": "QUALCOMM"
         },
@@ -318,16 +298,8 @@
             "name": "Starbucks"
         },
         {
-            "symbol": "SIAL",
-            "name": "Sigma-Aldrich"
-        },
-        {
             "symbol": "SIRI",
             "name": "Sirius XM Holdings"
-        },
-        {
-            "symbol": "SNDK",
-            "name": "SanDisk"
         },
         {
             "symbol": "SPLS",

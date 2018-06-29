@@ -7,32 +7,23 @@ class Run_Momentum:
     
     def run(self):
 
-        user_id = 'pej3fiZSJTf4tNHfNHCKHxa7eJf2'
-
         momentum = Momentum()
         database = Database()
 
-        markets = database.fetch_markets(user_id)
-        assets = database.fetch_assets(user_id, markets)
-
-        for i in range(0, len(assets)):
+        markets = database.fetch_markets()
+    
+        for i in range(0, len(markets)):
+    
+            assets = database.fetch_assets(markets[i])
+        
+        for j in range(0, len(assets)):
             
-            print(assets['asset_id'][i])
+            print(assets['symbol'][j])
 
-            series = database.fetch_series(user_id, assets['market_id'][i], assets['asset_id'][i])
+            series = database.fetch_series(assets['market_id'][j], assets['symbol'][j])
 
             long_term_sharpe_ratio = momentum.calculate_long_term_sharpe_ratio(series)
 
-            database.store_value(user_id, assets['market_id'][i], assets['asset_id'][i], 'longTermSharpeRatio', long_term_sharpe_ratio)
-
-            # sum = 0
-            # for j in range(0, len(sharpe_ratio_series)):
-
-            #    sum = sum + sharpe_ratio_series['value'][j]
-            
-            # sharpe_ratio = sum / len(sharpe_ratio_series)
-
-            # database.store_value(user_id, assets['market_id'][i], assets['asset_id'][i], 'sharpe_ratio', sharpe_ratio)
-            
+            database.store_value(assets['market_id'][j], assets['symbol'][j], 'longTermSharpeRatio', long_term_sharpe_ratio)
 
 Run_Momentum().run()

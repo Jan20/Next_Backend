@@ -1,0 +1,125 @@
+{
+    "description": "Corporations of the DAX 30",
+    "corporations": [
+        {
+            "symbol": "ETR:ADS",
+            "name": "adidas AG"
+        },
+        {
+            "symbol": "ETR:ALV",
+            "name": "Allianz"
+        },
+        {
+            "symbol": "ETR:BAS",
+            "name": "BASF"
+        },
+        {
+            "symbol": "ETR:BAYN",
+            "name": "Bayer"
+        },
+        {
+            "symbol": "ETR:BEI",
+            "name": "Beiersdorf AG"
+        },
+        {
+            "symbol": "ETR:BMW",
+            "name": "BMW AG"
+        },
+        {
+            "symbol": "ETR:CBK",
+            "name": "Commerzbank"
+        },
+        {
+            "symbol": "ETR:CON",
+            "name": "Continental AG"
+        },
+        {
+            "symbol": "ETR:1COV",
+            "name": "Covestro AG"
+        },
+        {
+            "symbol": "ETR:DAI",
+            "name": "Daimler AG"
+        },
+        {
+            "symbol": "ETR:DBK",
+            "name": "Deutsche Bank AG"
+        },
+        {
+            "symbol": "ETR:DB1",
+            "name": "Deutsche Börse AG"
+        },
+        {
+            "symbol": "ETR:DPW",
+            "name": "Deutsche Post AG"
+        },
+        {
+            "symbol": "ETR:DTE",
+            "name": "Deutsche Telekom AG"
+        },
+        {
+            "symbol": "ETR:EOAN",
+            "name": "E.ON SE"
+        },
+        {
+            "symbol": "ETR:FME",
+            "name": "Fresenius Medical Care AG"
+        },
+        {
+            "symbol": "ETR:FRE",
+            "name": "Fresenius SE"
+        },
+        {
+            "symbol": "ETR:HEI",
+            "name": "HeidelbergCement AG"
+        },
+        {
+            "symbol": "ETR:HEN3",
+            "name": "Henkel KGaA Vz."
+        },
+        {
+            "symbol": "ETR:IFX",
+            "name": "Infineon AG"
+        },
+        {
+            "symbol": "ETR:LINU",
+            "name": "Linde AG (I)"
+        },
+        {
+            "symbol": "ETR:LHA",
+            "name": "Lufthansa AG"
+        },
+        {
+            "symbol": "ETR:MRK",
+            "name": "Merck KGaA"
+        },
+        {
+            "symbol": "ETR:MUV2",
+            "name": "Munich Re"
+        },
+        {
+            "symbol": "ETR:RWE",
+            "name": "RWE AG St."
+        },
+        {
+            "symbol": "ETR:SAP",
+            "name": "SAP SE"
+        },
+        {
+            "symbol": "ETR:SIE",
+            "name": "Siemens AG"
+        },
+        {
+            "symbol": "ETR:TKA",
+            "name": "thyssenkrupp AG"
+        },
+        {
+            "symbol": "ETR:VOW3",
+            "name": "Volkswagen (VW) AG Vz."
+        },
+        {
+            "symbol": "ETR:VNA",
+            "name": "Vonovia SE"
+        }
+    ]
+}
