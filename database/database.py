@@ -12,136 +12,6 @@ database = firestore.client()
 
 class Database:
 
-    #################
-    ### Variables ###
-    #################
-    
-    user_id = None
-    market_id = None
-    asset_id = None
-
-    ############
-    ## MARKET ##
-    ############
-
-    def fetch_markets(self):
-
-        markets = []
-
-        for market in database.collection('markets').get():
-            
-            market_dict = market.to_dict()
-            markets.append(str(market_dict['market_id']))
-
-        print(markets)
-        return markets
-
-
-    def create_market(self, name, category, market_id):
-
-        data = {'name': name, 'category': category, 'market_id': market_id}
-
-        database.collection('markets').document(market_id).set(data)
-
-    ###########
-    ## ASSET ##
-    ###########
-
-    def fetch_assets(self, market_id):
-
-        dataframe = pandas.DataFrame(columns=['name', 'symbol', 'market_id'])
-
-        for asset in database.collection('markets/' + market_id + '/assets').get():
-            
-            asset_dict = asset.to_dict()
-            dataframe = dataframe.append({'name': asset_dict['name'], 'symbol': asset_dict['symbol'], 'market_id': asset_dict['market_id']}, ignore_index=True)
-
-        print(dataframe)
-        return dataframe
-
-    ############
-    ## Series ##
-    ############
-
-    def fetch_series(self, market_id, asset_id):
-        
-        dates, values = [], []
-
-        for entry in database.collection('markets/' + market_id + '/assets/' + asset_id + '/series').get():
-
-            entry_dict = entry.to_dict()
-            dates.append(str(entry_dict[u'date']))
-            values.append(float(entry_dict[u'value']))
-        
-        return pandas.DataFrame(data={'date': dates, 'value': values})
-
-    
-    def create_asset(self, name, symbol, market_id):
-        
-        data = {'name': name, 'symbol': symbol, 'market_id': market_id}
-        
-        database.collection('markets/'+ market_id + '/assets').document(symbol).set(data)
-
-        print('a new asset has been created.')
-       
-
-    def update_asset(self, market_id, asset_id, value_name, value):
-        
-        asset_document = database.document('markets/'+ market_id + '/assets/' + asset_id)
-
-        asset_document.update({
-        
-            value_name: value
-        
-        })
-
-        print('an existing asset has been updated.')
-       
-
-    #############
-    ### WRITE ###
-    #############
-    def fetch_series(self, market_id, symbol):
-        
-        dataframe = pandas.DataFrame(columns=['date', 'value'])
-
-        for series in database.collection('markets/' + market_id + '/assets/' + symbol + '/series').get():
-            
-            series_dict = series.to_dict()
-            dataframe = dataframe.append({'date': series_dict['date'], 'value': series_dict['value']}, ignore_index=True)
-
-        print(dataframe)
-        return dataframe
-
-
-    def store_series(self, market_id, symbol, series_name, series):
-        
-        firestore_collection = database.collection('markets/'+ market_id + '/assets/' + symbol + '/' + series_name)
-
-        dataframe = pandas.DataFrame(columns=['date', 'value'])
-
-        for entry in firestore_collection.get():
-
-            entry_dict = entry.to_dict()
-            dataframe = dataframe.append({'date': entry_dict['date'], 'value': entry_dict['value']}, ignore_index=True)
-
-        dataframe = series[(~series.date.isin(dataframe.date))]
-
-
-        for i in range(0, len(dataframe['date'])):
-
-            print(str(dataframe['date'][i]))
-
-            firestore_collection.document(dataframe['date'][i]).set({
-            
-                'date': str(dataframe['date'][i]),
-                'value': float(dataframe['value'][i])
-        
-            })
-
-        print('Series has been saved at Firestore.')
-
-
     def store_short_term_predictions(self, user_id, market_id, asset_id, series):
         
         test_predictions_firestore_collection = database.collection('markets/'+ market_id + '/assets/' + asset_id + '/short_term_predictions')
@@ -220,8 +90,7 @@ class Database:
 
         for entry in database.collection('markets/' + market_id + '/assets/' + asset_id + '/' + collection).get():
             
-            entry_dict = entry.to_dict()
-            database.document('markets/' + market_id + '/assets/' + asset_id + '/' + collection + '/' + entry_dict['date']).delete()
+            database.document('markets/' + market_id + '/assets/' + asset_id + '/' + collection + '/' + entry.to_dict()['date']).delete()
 
         print(collection + ' collection was successfully deleted.')
 

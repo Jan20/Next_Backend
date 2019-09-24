@@ -34,3 +34,6 @@ market_import = Market_Import()
 
 market_import.create_market('Nasdaq', 'American Tech Index', 'nasdaq')
 market_import.import_market('nasdaq', 'import/nasdaq.json')
+
+market_import.create_market('DAX', 'German 30 Index', 'dax')
+market_import.import_market('dax', 'import/dax.json')

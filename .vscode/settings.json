@@ -1,2 +1,7 @@
 {
+    "python.pythonPath": "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3",
+    "editor.tokenColorCustomizations": {
+        "comments": "#3c3c3c"
+    },
+
 }
